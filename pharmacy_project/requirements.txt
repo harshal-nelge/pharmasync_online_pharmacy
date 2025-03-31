@@ -3,3 +3,4 @@ Pillow==9.5.0
 django-crispy-forms==2.0
 razorpay
 paypalrestsdk
+whitenoise
