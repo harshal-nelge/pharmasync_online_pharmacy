@@ -60,6 +60,9 @@ TEMPLATES = [
     },
 ]
 
+ALLOWED_HOSTS = ['*']
+
+
 WSGI_APPLICATION = 'pharmacy_project.wsgi.application'
 
 DATABASES = {
