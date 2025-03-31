@@ -19,7 +19,7 @@ SECRET_KEY = 'your-secret-key-here-replace-in-production'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -61,6 +61,7 @@ TEMPLATES = [
 ]
 
 ALLOWED_HOSTS = ['*']
+PORT = os.getenv("PORT", "8000")
 
 
 WSGI_APPLICATION = 'pharmacy_project.wsgi.application'
