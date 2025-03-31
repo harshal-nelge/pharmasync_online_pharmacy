@@ -2,6 +2,10 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import Category, Product, CartItem, Order, OrderItem, DiscountCode
 
+admin.site.site_header = "PharmaSync Admin"
+admin.site.site_title = "PharmaSync Admin Portal"
+admin.site.index_title = "Welcome to PharmaSync Admin Portal"
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
