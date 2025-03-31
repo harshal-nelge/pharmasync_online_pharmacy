@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">Your Shopping Cart</h2>
+    
+    {% if cart_items %}
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h3 class="mb-0">Cart Items</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            {% for item in cart_items %}
+                            <div class="list-group-item">
+                                <div class="row align-items-center">
+                                    <div class="col-md-2">
+                                        {% if item.product.image %}
+                                        <img src="{{ item.product.image.url }}" 
+                                             alt="{{ item.product.name }}" 
+                                             class="img-fluid rounded">
+                                        {% else %}
+                                        <div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                             style="width: 80px; height: 80px;">
+                                            <i class="fas fa-image text-muted"></i>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>{{ item.product.name }}</h5>
+                                        <p class="text-muted mb-0">{{ item.product.description|truncatechars:100 }}</p>
+                                    </div>
+                                    <div class="col-md-2 text-center">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text">Qty</span>
+                                            <input type="number" class="form-control" value="{{ item.quantity }}" min="1" max="10" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <p class="mb-0">Rs{{ item.total_price|floatformat:2 }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Discount Code Form -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h3 class="mb-0">Discount Code</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'apply_discount' %}">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="discount_code" placeholder="Enter discount code" 
+                                       value="{{ discount_code.code|default:'' }}">
+                                <button type="submit" class="btn btn-outline-secondary">Apply</button>
+                            </div>
+                            {% if discount_code %}
+                            <div class="mt-2 text-success">
+                                <i class="fas fa-check-circle"></i> Discount code "{{ discount_code.code }}" ({{ discount_code.discount_percent }}% off) applied!
+                            </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h3 class="mb-0">Order Summary</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span>Rs{{ total|floatformat:2 }}</span>
+                            </li>
+                            {% if discount_amount > 0 %}
+                            <li class="d-flex justify-content-between mb-2 text-success">
+                                <span>Discount:</span>
+                                <span>-Rs{{ discount_amount|floatformat:2 }}</span>
+                            </li>
+                            {% endif %}
+                            <li class="d-flex justify-content-between border-top pt-3 mt-2">
+                                <h5>Total:</h5>
+                                <h5>Rs{{ grand_total|floatformat:2 }}</h5>
+                            </li>
+                        </ul>
+                        <a href="{% url 'checkout' %}" class="btn btn-primary w-100 mt-3">
+                            Proceed to Checkout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Your cart is empty!</h4>
+            <p>Browse our products and add some items to your cart.</p>
+            <a href="{% url 'home' %}" class="btn btn-primary">Continue Shopping</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

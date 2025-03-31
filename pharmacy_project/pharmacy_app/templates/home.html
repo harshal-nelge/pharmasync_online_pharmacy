@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 4rem 0;
+        margin-bottom: 2rem;
+        border-radius: 10px;
+    }
+
+    .hero-section h1 {
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .category-card {
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .category-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+
+    .product-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s ease;
+    }
+
+    .product-card:hover {
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        transform: translateY(-5px);
+    }
+
+    .product-card .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex-grow: 1;
+    }
+
+    .product-card .btn-group {
+        width: 100%;
+    }
+
+    .product-card img {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .badge-sale {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+    }
+</style>
+
+<div class="hero-section text-center">
+    <div class="container">
+        <h1>Welcome to Online Pharmacy</h1>
+        <p class="lead">Your trusted partner in health and wellness</p>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <a href="#categories" class="btn btn-light btn-lg">
+                <i class="fas fa-pills me-2"></i>Browse Categories
+            </a>
+            <a href="#featured" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-star me-2"></i>Featured Products
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <section id="categories">
+        <h2 class="mb-4">
+            <i class="fas fa-tags me-2"></i>Product Categories
+        </h2>
+        <div class="row">
+            {% for category in categories %}
+            <div class="col-md-3 mb-4">
+                <div class="card category-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas {{ category.icon|default:'fa-medkit' }} fa-3x mb-3 text-primary"></i>
+                        <h5 class="card-title">{{ category.name }}</h5>
+                        <p class="card-text text-muted">{{ category.description|truncatewords:10 }}</p>
+                        <a href="{% url 'category_products' category.slug %}" class="btn btn-primary mt-2">
+                            View Products <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="featured" class="mt-5">
+        <h2 class="mb-4">
+            <i class="fas fa-star me-2"></i>Featured Products
+        </h2>
+        <div class="row">
+            {% for product in featured_products %}
+            <div class="col-md-3 mb-4">
+                <div class="card product-card">
+                    {% if product.is_sale %}
+                    <span class="badge bg-danger badge-sale">Sale</span>
+                    {% endif %}
+                    
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-image fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text text-muted">{{ product.short_description|truncatewords:10 }}</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <span class="h5 mb-0 text-primary">
+                                {% if product.is_sale %}
+                                <del class="text-muted me-2">Rs{{ product.original_price }}</del>
+                                {% endif %}
+                                Rs{{ product.price }}
+                            </span>
+                            
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'product_detail' product.slug %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+                                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-shopping-cart me-1"></i>Add
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    No featured products available at the moment.
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Optional: Add some interactivity
+        const productCards = document.querySelectorAll('.product-card');
+        productCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.classList.add('shadow-lg');
+            });
+            card.addEventListener('mouseleave', function() {
+                this.classList.remove('shadow-lg');
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,360 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">Checkout</h2>
+    
+    {% if cart_items %}
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h3 class="mb-0"><i class="fas fa-shopping-basket me-2"></i>Order Details</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            {% for item in cart_items %}
+                            <div class="list-group-item">
+                                <div class="row align-items-center">
+                                    <div class="col-md-2">
+                                        {% if item.product.image %}
+                                        <img src="{{ item.product.image.url }}" 
+                                             alt="{{ item.product.name }}" 
+                                             class="img-fluid rounded">
+                                        {% else %}
+                                        <div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                             style="width: 80px; height: 80px;">
+                                            <i class="fas fa-image text-muted"></i>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>{{ item.product.name }}</h5>
+                                        <p class="text-muted mb-0">{{ item.product.description|truncatechars:50 }}</p>
+                                    </div>
+                                    <div class="col-md-2 text-center">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text">Qty</span>
+                                            <input type="number" class="form-control" value="{{ item.quantity }}" min="1" max="10" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <p class="mb-0">Rs{{ item.total_price|floatformat:2 }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h3 class="mb-0"><i class="fas fa-truck me-2"></i>Shipping Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="shipping-form">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="firstName" class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="firstName" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="lastName" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="lastName" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" value="{{ request.user.email }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <input type="text" class="form-control" id="address" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="city" class="form-label">City</label>
+                                    <input type="text" class="form-control" id="city" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="state" class="form-label">State</label>
+                                    <input type="text" class="form-control" id="state" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="zipCode" class="form-label">Zip Code</label>
+                                    <input type="text" class="form-control" id="zipCode" required>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Active Discount Codes -->
+                {% if active_discount_codes %}
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h3 class="mb-0"><i class="fas fa-tag me-2"></i>Available Discounts</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for discount in active_discount_codes %}
+                            <div class="col-md-6 mb-2">
+                                <div class="card border-primary">
+                                    <div class="card-body p-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="badge bg-primary">{{ discount.discount_percent }}% OFF</span>
+                                                <strong class="ms-2">{{ discount.code }}</strong>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary apply-discount" data-code="{{ discount.code }}">
+                                                Apply
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card sticky-top" style="top: 20px">
+                    <div class="card-header bg-light">
+                        <h3 class="mb-0"><i class="fas fa-receipt me-2"></i>Order Summary</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span>Rs{{ total|floatformat:2 }}</span>
+                            </li>
+                            {% if discount_amount > 0 %}
+                            <li class="d-flex justify-content-between mb-2 text-success">
+                                <span>Discount:</span>
+                                <span>-Rs{{ discount_amount|floatformat:2 }}</span>
+                                <small>({{ discount_code.code }} - {{ discount_code.discount_percent }}%)</small>
+                            </li>
+                            {% endif %}
+                            <li class="d-flex justify-content-between border-top pt-3 mt-2">
+                                <h5>Total:</h5>
+                                <h5>Rs{{ grand_total|floatformat:2 }}</h5>
+                            </li>
+                        </ul>
+                        
+                        <!-- Payment Method Selection -->
+                        <div class="mb-3">
+                            <h5 class="mb-3">Payment Method</h5>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="payment_method" id="paypal" value="PAYPAL" checked>
+                                <label class="form-check-label d-flex align-items-center" for="paypal">
+                                    <i class="fab fa-paypal text-primary me-2"></i> PayPal
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" id="razorpay" value="RAZORPAY">
+                                <label class="form-check-label d-flex align-items-center" for="razorpay">
+                                    <i class="fas fa-credit-card text-info me-2"></i> Razorpay
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- PayPal Button -->
+                        <button type="button" 
+                                class="btn btn-primary w-100 mb-2" 
+                                id="checkout-button">
+                            <i class="fas fa-lock me-2"></i>Complete Order
+                        </button>
+                        
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-shield-alt me-1"></i>
+                                Secure payment processing
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Apply Discount Form -->
+                <div class="card mt-4">
+                    <div class="card-header bg-light">
+                        <h3 class="mb-0"><i class="fas fa-tags me-2"></i>Discount Code</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="discount-form" action="{% url 'apply_discount' %}" method="post">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="discount_code" id="discount_code" placeholder="Enter discount code" 
+                                       value="{{ discount_code.code|default:'' }}">
+                                <button type="submit" class="btn btn-outline-secondary">Apply</button>
+                            </div>
+                            {% if discount_code %}
+                            <div class="mt-2 text-success">
+                                <i class="fas fa-check-circle"></i> Discount code "{{ discount_code.code }}" ({{ discount_code.discount_percent }}% off) applied!
+                            </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Your cart is empty!</h4>
+            <p>Browse our products and add some items to your cart.</p>
+            <a href="{% url 'home' %}" class="btn btn-primary">Continue Shopping</a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Razorpay Form (Hidden) -->
+<form id="razorpay-form" method="POST" action="{% url 'razorpay_callback' %}" style="display: none;">
+    {% csrf_token %}
+    <input type="text" name="razorpay_payment_id" id="razorpay_payment_id">
+    <input type="text" name="razorpay_order_id" id="razorpay_order_id">
+    <input type="text" name="razorpay_signature" id="razorpay_signature">
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkoutButton = document.getElementById('checkout-button');
+        const shippingForm = document.getElementById('shipping-form');
+        const discountForm = document.getElementById('discount-form');
+        const razorpayForm = document.getElementById('razorpay-form');
+        const paymentMethodRadios = document.querySelectorAll('input[name="payment_method"]');
+        
+        // Apply discount code buttons
+        const applyDiscountButtons = document.querySelectorAll('.apply-discount');
+        if (applyDiscountButtons) {
+            applyDiscountButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const code = this.getAttribute('data-code');
+                    document.getElementById('discount_code').value = code;
+                    discountForm.submit();
+                });
+            });
+        }
+        
+        function validateShippingForm() {
+            const inputs = shippingForm.querySelectorAll('input[required]');
+            for (let i = 0; i < inputs.length; i++) {
+                if (!inputs[i].value.trim()) {
+                    alert('Please fill out all shipping information fields.');
+                    inputs[i].focus();
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        function getSelectedPaymentMethod() {
+            for (const radio of paymentMethodRadios) {
+                if (radio.checked) {
+                    return radio.value;
+                }
+            }
+            return 'PAYPAL'; // Default
+        }
+        
+        function collectShippingData() {
+            return {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                zipCode: document.getElementById('zipCode').value,
+                payment_method: getSelectedPaymentMethod()
+            };
+        }
+        
+        // Handle Razorpay payment
+        function handleRazorpayPayment(data) {
+            const options = {
+                key: "{{ razorpay_key_id }}",
+                amount: data.amount,
+                currency: data.currency,
+                name: data.name,
+                description: data.description,
+                order_id: data.order_id,
+                prefill: data.prefill,
+                handler: function(response) {
+                    document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                    document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                    document.getElementById('razorpay_signature').value = response.razorpay_signature;
+                    razorpayForm.submit();
+                },
+                theme: {
+                    color: "#007bff"
+                }
+            };
+            
+            const rzp = new Razorpay(options);
+            rzp.open();
+        }
+        
+        // Main checkout process
+        checkoutButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            
+            // Validate shipping form
+            if (!validateShippingForm()) {
+                return;
+            }
+            
+            // Disable button during processing
+            checkoutButton.disabled = true;
+            checkoutButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+            
+            const shippingData = collectShippingData();
+            
+            fetch("{% url 'checkout' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify(shippingData)
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                if (shippingData.payment_method === 'RAZORPAY') {
+                    // Handle Razorpay
+                    if (data.method === 'razorpay') {
+                        handleRazorpayPayment(data);
+                    } else {
+                        throw new Error('Invalid response for Razorpay payment');
+                    }
+                } else {
+                    // Handle PayPal
+                    if (data.redirect_url) {
+                        window.location.href = data.redirect_url;
+                    } else {
+                        throw new Error('No redirect URL received for PayPal');
+                    }
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                alert('There was an issue processing your payment. Please try again.');
+                
+                // Reset button
+                checkoutButton.disabled = false;
+                checkoutButton.innerHTML = '<i class="fas fa-lock me-2"></i>Complete Order';
+            });
+        });
+    });
+</script>
+{% endblock %}
