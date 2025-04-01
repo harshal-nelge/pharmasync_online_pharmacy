@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404
@@ -13,6 +13,8 @@ from django.urls import reverse
 from django.http import JsonResponse
 from .models import Category, Product, CartItem, Order, OrderItem, DiscountCode
 from decimal import Decimal
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.db.models import Q
 
 def home(request):
     categories = Category.objects.all()
@@ -22,6 +24,25 @@ def home(request):
         'featured_products': featured_products
     })
 
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, f'Welcome back, {username}!')
+                return redirect('home')  # Redirect to home page after login
+            else:
+                messages.error(request, 'Invalid username or password.')
+        else:
+            messages.error(request, 'Invalid username or password.')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'auth/login.html', {'form': form})
+
 def category_products(request, slug):
     category = get_object_or_404(Category, slug=slug)
     products = category.products.filter(stock__gt=0)
@@ -29,6 +50,38 @@ def category_products(request, slug):
         'category': category,
         'products': products
     })
+
+def category_detail(request, category_slug):
+    category = get_object_or_404(Category, slug=category_slug)
+    products = Product.objects.filter(category=category)
+    
+    # Debug: Check initial product count
+    print(f"Initial products count: {products.count()}")
+    print(f"Product names: {[p.name for p in products]}")
+    
+    # Handle search within category
+    search_query = request.GET.get('search', '')
+    print(f"Search query: '{search_query}'")
+    
+    if search_query:
+        # Debug: Before filtering
+        print(f"Before filtering - products count: {products.count()}")
+        
+        filtered_products = products.filter(
+            Q(name__icontains=search_query)
+        )
+        
+        # Debug: After filtering
+        print(f"After filtering - products count: {filtered_products.count()}")
+        print(f"Filtered product names: {[p.name for p in filtered_products]}")
+        
+        products = filtered_products
+    
+    context = {
+        'category': category,
+        'products': products
+    }
+    return render(request, 'products/category_list.html', context)
 
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)

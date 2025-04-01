@@ -18,6 +18,11 @@
                         <label for="id_password" class="form-label">Password</label>
                         <input type="password" name="password" id="id_password" class="form-control" required>
                     </div>
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <p>Invalid username or password. Please try again.</p>
+                    </div>
+                    {% endif %}
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>
                 <div class="mt-3">

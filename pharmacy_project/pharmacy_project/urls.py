@@ -11,7 +11,7 @@ urlpatterns = [
 
     # Authentication URLs
     path('signup/', views.signup, name='signup'),
-    path('login/', auth_views.LoginView.as_view(template_name='auth/login.html'), name='login'),
+    path('login/', views.login_view, name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
     path('profile/', views.profile, name='profile'),
 
@@ -28,6 +28,8 @@ urlpatterns = [
     path('payment/cancel/', views.payment_cancel, name='payment_cancel'),
     path('cart/apply-discount/', views.apply_discount, name='apply_discount'),
     path('payment/razorpay-callback/', views.razorpay_callback, name='razorpay_callback'),
+     path('category/<slug:category_slug>/', views.category_detail, name='category_detail'),
+    
 ]
 
 # Serve media files during development

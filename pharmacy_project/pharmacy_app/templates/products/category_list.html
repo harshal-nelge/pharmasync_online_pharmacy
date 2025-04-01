@@ -1,10 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row">
+<div class="row mb-3">
     <div class="col-12">
         <h1>{{ category.name }}</h1>
         <p>{{ category.description }}</p>
+    </div>
+</div>
+
+<!-- Search Form -->
+<div class="row mb-4">
+    <div class="col-md-6 mx-auto">
+        <form method="GET" class="d-flex">
+            <input 
+                type="text" 
+                name="search" 
+                class="form-control me-2" 
+                placeholder="Search in {{ category.name }}..." 
+                value="{{ request.GET.search }}"
+            >
+            <button type="submit" class="btn btn-primary">Search</button>
+            {% if request.GET.search %}
+                <a href="{{ request.path }}" class="btn btn-outline-secondary ms-2">Clear</a>
+            {% endif %}
+        </form>
     </div>
 </div>
 
@@ -45,7 +64,12 @@
     {% else %}
         <div class="col-12">
             <div class="alert alert-info">
-                No products available in this category.
+                {% if request.GET.search %}
+                    <p>No products found matching "{{ request.GET.search }}" in this category.</p>
+                    <a href="{{ request.path }}" class="btn btn-outline-primary">Clear search</a>
+                {% else %}
+                    No products available in this category.
+                {% endif %}
             </div>
         </div>
     {% endif %}
