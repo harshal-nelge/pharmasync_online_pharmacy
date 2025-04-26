@@ -1,97 +1,126 @@
-PharmaSync - Online Pharmacy Management System
-Project Overview
-PharmaSync is a comprehensive online pharmacy management system built with Django that enables users to browse, purchase medications, and manage prescriptions online. The platform offers a seamless shopping experience with secure payment processing, prescription verification, and inventory management.
-Key Features
-User Management
+# PharmaSync - Online Pharmacy Management System
 
-User registration and authentication
-User profiles with order history
-Role-based access control
+## Overview
+PharmaSync is a comprehensive online pharmacy platform built with Django that allows users to browse, purchase medications, and manage their prescriptions online. The system provides a secure and user-friendly interface for both customers and administrators.
 
-Product Management
+![PharmaSync Screenshot](https://postimg.cc/gallery/RNM9HF5)
 
-Categorized product listings
-Detailed product information
-Prescription-based filtering (OTC vs RX)
-Stock management
-Product search functionality
+## Live Demo
+Access the live demo: [https://medical-pharmacy.onrender.com/](https://medical-pharmacy.onrender.com/)
 
-Shopping Experience
+## Features
 
-Intuitive product browsing by category
-Detailed product pages with descriptions and pricing
-Shopping cart functionality
-Discount code system
-Responsive design for all devices
+### User Management
+- User registration and authentication
+- Personal profiles with order history
+- Secure password management
 
-Checkout and Payment Integration
+### Product Catalog
+- Browse medications by categories
+- Detailed product information with images
+- Prescription type indicators (OTC vs RX)
+- Product search functionality
 
-Seamless checkout process
-Multiple payment options:
+### Shopping Experience
+- Intuitive cart management
+- Real-time cart updates
+- Quantity adjustment
+- Stock availability checks
 
-PayPal integration
-Razorpay integration
+### Checkout System
+- Multiple payment options:
+  - PayPal integration
+  - Razorpay integration
+- Shipping information collection
+- Order confirmation emails
 
+### Discount Management
+- Coupon code application
+- Percentage-based discounts
+- Time-limited promotional offers
 
-Order confirmation and tracking
-Shipping information management
+### Admin Dashboard
+- Comprehensive administration panel
+- Product and inventory management
+- Order processing workflow
+- Customer management
+- Sales analytics
+- Discount code creation and management
 
-Discounts and Promotions
+## Technologies Used
+- **Backend**: Django
+- **Frontend**: HTML5, CSS3, Bootstrap 5, JavaScript
+- **Database**: SQLite (Development), PostgreSQL (Production)
+- **Payment Processing**: PayPal API, Razorpay API
+- **Image Handling**: Pillow
+- **Form Management**: django-crispy-forms
+- **Deployment**: Render with Whitenoise for static files
 
-Coupon code system with percentage-based discounts
-Time-limited promotional offers
-Easy application of discount codes at checkout
+## Installation and Setup
 
-Admin Dashboard
+### Prerequisites
+- Python 3.8+
+- pip
 
-Comprehensive admin interface
-Inventory management
-Order processing and status updates
-User management
-Sales analytics
-Discount code management
-Product category management
+### Local Development Setup
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/pharmasync.git
+cd pharmasync
+```
 
-Security Features
+2. Create and activate a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
-Secure payment processing
-Prescription verification system
-User data protection
-CSRF protection
-Authentication validation
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-Technical Specifications
+4. Configure environment variables for payment gateways:
+   - Create a `.env` file and add your PayPal and Razorpay credentials
+   - See `.env.example` for required variables
 
-Built with Django 4.2.7
-Responsive frontend using Bootstrap 5
-PostgreSQL database (SQLite for development)
-Payment gateway integrations (PayPal, Razorpay)
-Image handling with Pillow
-Form management with django-crispy-forms
-Static file handling with Whitenoise
+5. Run migrations:
+```bash
+python manage.py migrate
+```
 
-Deployment
-The application is deployed on Render and can be accessed at: https://medical-pharmacy.onrender.com/
-Resume Description
-PharmaSync - Online Pharmacy Management System
-Technologies: Django, Python, Bootstrap, JavaScript, SQLite, PayPal API, Razorpay API
-Description: Developed a comprehensive online pharmacy management system that enables users to browse, purchase medications, and manage prescriptions online. The platform features:
+6. Create a superuser:
+```bash
+python manage.py createsuperuser
+```
 
-User authentication and profile management system
-Categorized product listings with prescription type indicators (OTC/RX)
-Inventory management with stock tracking
-Shopping cart functionality with real-time updates
-Dual payment gateway integration (PayPal and Razorpay)
-Discount code system with time-based validity
-Admin dashboard for inventory, order, and user management
-Responsive design for cross-device compatibility
-Secure handling of payment transactions and user data
+7. Start the development server:
+```bash
+python manage.py runserver
+```
 
-Achievements:
+8. Access the application at http://127.0.0.1:8000/
 
-Successfully integrated multiple payment gateways for international transactions
-Implemented a secure prescription verification system
-Created an intuitive admin interface for non-technical pharmacy staff
-Ensured WCAG compliance for accessibility
-Deployed a scalable solution on cloud infrastructure with Render
-RetryClaude can make mistakes. Please double-check responses.1 message remaining until 4:30 PMUpgrade plan 3.7 SonnetChat controls 3.7 Sonnet
+### Payment Gateway Setup
+- PayPal: Set up a developer account at [developer.paypal.com](https://developer.paypal.com)
+- Razorpay: Register at [razorpay.com](https://razorpay.com) for API credentials
+
+## Usage Guide
+
+### Customer Journey
+1. Register or log in to your account
+2. Browse medications by category or search for specific products
+3. Add products to your cart
+4. Apply discount codes if available
+5. Proceed to checkout
+6. Enter shipping information
+7. Select payment method and complete payment
+8. Receive order confirmation
+
+### Admin Operations
+1. Log in to the admin panel at `/admin`
+2. Manage product inventory, categories, and images
+3. Process and update order statuses
+4. Create and manage discount promotions
+5. View customer information and order history
+
