@@ -3,7 +3,19 @@
 ## Overview
 PharmaSync is a comprehensive online pharmacy platform built with Django that allows users to browse, purchase medications, and manage their prescriptions online. The system provides a secure and user-friendly interface for both customers and administrators.
 
-![PharmaSync Screenshot](https://i.postimg.cc/bYkr1n31/Screenshot-2025-04-26-at-1-48-51-PM.png)
+## 💊 PharmaSync Screenshots
+
+### 🔍 Dashboard View
+![Dashboard](https://i.postimg.cc/bYkr1n31/Screenshot-2025-04-26-at-1-48-51-PM.png)
+
+### 🛒 Cart & Checkout
+![Checkout](https://i.postimg.cc/dtF160xp/Screenshot-2025-04-26-at-1-51-41-PM.png)
+
+### 📦 Medicine Category
+![Orders](https://i.postimg.cc/Njf0hzYx/Screenshot-2025-04-26-at-1-49-36-PM.png)
+
+### 🧾 Payment
+![Payment](https://i.postimg.cc/9FBfnh3M/Screenshot-2025-04-26-at-1-52-24-PM.png)
 
 ## Live Demo
 Access the live demo: [https://medical-pharmacy.onrender.com/](https://medical-pharmacy.onrender.com/)
